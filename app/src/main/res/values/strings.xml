@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Cognito Test</string>
+    <string name="token_info"><b>Token info</b></string>
+</resources>
