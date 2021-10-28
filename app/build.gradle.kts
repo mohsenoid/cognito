@@ -18,9 +18,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "AWS_REGION", "\"PUT AWS REGION HERE!\"")
-        buildConfigField("String", "COGNITO_USER_POOL_ID", "\"PUT COGNITO USER POOL ID HERE!\"")
-        buildConfigField("String", "COGNITO_CLIENT_ID", "\"PUT COGNITO CLIENT ID HERE!\"")
+        buildConfigField("String", "AWS_REGION", "\"eu-central-1\"")
+        buildConfigField("String", "COGNITO_USER_POOL_ID", "\"eu-central-1_ZecAgSgJN\"")
+        buildConfigField("String", "COGNITO_CLIENT_ID", "\"4es1uppmrvpuij1gv1dm658aff\"")
         buildConfigField("String", "COGNITO_CLIENT_SECRET", "null")
     }
 
@@ -57,6 +57,8 @@ dependencies {
 
     val koinVersion = "3.1.2"
     implementation("io.insert-koin:koin-android:$koinVersion")
+
+    implementation("com.amplifyframework:aws-auth-cognito:1.28.1")
 
     implementation("com.amazonaws:aws-android-sdk-core:2.35.0")
     implementation("com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.35.0")

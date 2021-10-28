@@ -1,6 +1,9 @@
 package com.mohsenoid.cognito
 
 import android.app.Application
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.AmplifyConfiguration
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
 import org.koin.android.ext.koin.androidContext
@@ -21,5 +24,13 @@ class CognitoApplication : Application() {
             androidContext(this@CognitoApplication)
             modules(appModule)
         }
+
+        Amplify.addPlugin(AWSCognitoAuthPlugin())
+        Amplify.configure(
+            AmplifyConfiguration.fromConfigFile(applicationContext, R.raw.amplifyconfiguration),
+            applicationContext
+        )
+
+        // Amplify.configure(applicationContext)
     }
 }

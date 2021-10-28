@@ -10,11 +10,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.amplifyframework.core.Amplify
 import com.mohsenoid.cognito.cognito.CognitoHelper
 import com.mohsenoid.cognito.cognito.model.FetchTokenResult
 import com.mohsenoid.cognito.cognito.model.LoginResult
 import com.mohsenoid.cognito.databinding.LoginFragmentBinding
+import logcat.LogPriority
+import logcat.logcat
 import org.koin.android.ext.android.inject
+import org.koin.core.component.getScopeId
 
 class LoginFragment : Fragment() {
 
@@ -34,7 +38,15 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        restoreSession()
+        Amplify.Auth.fetchAuthSession({ authSession ->
+            // on success
+            logcat("AmplifyQuickstart") { authSession.getScopeId() }
+        }, { authException ->
+            // on error
+            logcat("AmplifyQuickstart", LogPriority.ERROR) { "Failed to fetch auth session $authException" }
+        })
+
+        // restoreSession()
 
         binding.usernameLoginFragment.setText(cognitoHelper.currentUser)
 
@@ -62,10 +74,30 @@ class LoginFragment : Fragment() {
 
         lifecycleScope.launchWhenResumed {
             loadingUI(true)
-            val loginResult = cognitoHelper.userLogin(username.value, password.value)
+
+            Amplify.Auth.signIn(username.value, password.value, { authSignInResult ->
+                if (authSignInResult.isSignInComplete) {
+                    logcat("AuthQuickstart") { "Sign in succeeded" }
+
+                    Amplify.Auth.fetchAuthSession(
+                        {authSession->
+                            logcat("AuthQuickstart") { "Session fetched $authSession" }
+                        },
+                        {authException->
+                            // on error
+                            logcat("AmplifyQuickstart", LogPriority.ERROR) { "Failed to fetch auth session $authException" }
+                        })
+                } else {
+                    logcat("AuthQuickstart", LogPriority.ERROR) { "Sign in not complete" }
+                }
+            }, { authException ->
+                // on error
+                logcat("AmplifyQuickstart", LogPriority.ERROR) { "Failed to fetch auth session $authException" }
+            })
+
             loadingUI(false)
 
-            handleLoginResult(loginResult)
+            // handleLoginResult(loginResult)
         }
     }
 
